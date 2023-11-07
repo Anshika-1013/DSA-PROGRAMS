@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_ROWS 3
+#define MAX_LENGTH 50
+
+struct Product {
+    int productID;
+    char productName[MAX_LENGTH];
+    char category[MAX_LENGTH];
+    float price;
+    int quantity;
+    char expirationDate[MAX_LENGTH];
+};
+
+struct Product *inventory;
+
+void addProduct(struct Product *product) {
+    int i;
+    for (i = 0; i < MAX_ROWS; i++) {
+        if (inventory[i].productID == 0) {
+            inventory[i].productID = product->productID;
+            strcpy(inventory[i].productName, product->productName);
+            strcpy(inventory[i].category, product->category);
+            inventory[i].price = product->price;
+            inventory[i].quantity = product->quantity;
+            strcpy(inventory[i].expirationDate, product->expirationDate);
+            printf("Product with ID %d added to the inventory at position %d\n", product->productID, i);
+            return;
+        }
+    }
+    printf("Inventory is full. Cannot add more products.\n");
+}
+
+void removeProduct(int productID) {
+    int i;
+    for (i = 0; i < MAX_ROWS; i++) {
+        if (inventory[i].productID == productID) {
+            memset(&inventory[i], 0, sizeof(struct Product));
+            printf("Product with ID %d removed from the inventory.\n", productID);
+            return;
+        }
+    }
+    printf("Product with ID %d not found in the inventory.\n", productID);
+}
+
+void displayInventory() {
+    int i;
+    printf("Supermarket Inventory:\n");
+    printf("---------------------------------------------------------------------------------\n");
+    printf("Product ID   Product Name       Category        Price   Quantity    Expiration Date\n");
+    printf("---------------------------------------------------------------------------------\n");
+    for (i = 0; i < MAX_ROWS; i++) {
+        if (inventory[i].productID != 0) {
+            printf("%-12d%-20s%-15s$%-8.2f%-11d%-15s\n",
+                   inventory[i].productID, inventory[i].productName, inventory[i].category,
+                   inventory[i].price, inventory[i].quantity, inventory[i].expirationDate);
+        }
+    }
+    printf("---------------------------------------------------------------------------------\n");
+}
+
+void matrixAddition() {
+    int i;
+    int totalQuantity = 0;
+    for (i = 0; i < MAX_ROWS; i++) {
+        if (inventory[i].productID != 0) {
+            totalQuantity += inventory[i].quantity;
+        }
+    }
+    printf("Total Quantity (Matrix Addition): %d\n", totalQuantity);
+}
+
+void matrixSubtraction() {
+    int i;
+    int totalQuantity = 0;
+    for (i = 0; i < MAX_ROWS; i++) {
+        if (inventory[i].productID != 0) {
+            totalQuantity -= inventory[i].quantity;
+        }
+    }
+    printf("Total Quantity (Matrix Subtraction): %d\n", totalQuantity);
+}
+
+int main() {
+    int choice;
+
+    inventory = (struct Product *)malloc(MAX_ROWS * sizeof(struct Product));
+
+    printf("1. Add a Product\n2. Remove a Product\n3. Display Inventory\n4. Matrix Addition (Product Quantities)\n5. Matrix Subtraction (Product Quantities)\n6. Exit\n");
+
+    while (1) {
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1: {
+                struct Product newProduct;
+                printf("Enter Product ID: ");
+                scanf("%d", &newProduct.productID);
+                printf("Enter Product Name: ");
+                getchar();
+                fgets(newProduct.productName, sizeof(newProduct.productName), stdin);
+                newProduct.productName[strcspn(newProduct.productName, "\n")] = 0;
+                printf("Enter Category: ");
+                fgets(newProduct.category, sizeof(newProduct.category), stdin);
+                newProduct.category[strcspn(newProduct.category, "\n")] = 0;
+                printf("Enter Price: ");
+                scanf("%f", &newProduct.price);
+                printf("Enter Quantity: ");
+                scanf("%d", &newProduct.quantity);
+                printf("Enter Expiration Date: ");
+                getchar();
+                fgets(newProduct.expirationDate, sizeof(newProduct.expirationDate), stdin);
+                newProduct.expirationDate[strcspn(newProduct.expirationDate, "\n")] = 0;
+
+                addProduct(&newProduct);
+                break;
+            }
+            case 2: {
+                int productIDToRemove;
+                printf("Enter Product ID to remove: ");
+                scanf("%d", &productIDToRemove);
+                removeProduct(productIDToRemove);
+                break;
+            }
+            case 3:
+                displayInventory();
+                break;
+            case 4:
+                matrixAddition();
+                break;
+            case 5:
+                matrixSubtraction();
+                break;
+            case 6:
+                printf("Exiting...\n");
+                free(inventory);
+                return 0;
+            default:
+                printf("Invalid choice. Please enter a valid option.\n");
+        }
+    }
+
+    free(inventory);
+    return 0;
+}
