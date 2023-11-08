@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a node in the Circular Linked List
+struct cll {
+    int data;
+    struct cll *link;
+};
+
+// Global variable for the head of the Circular Linked List
+struct cll *head = NULL;
+
+// Function to create a Circular Linked List
+void create();
+// Function to display the Circular Linked List
+void display(struct cll *);
+// Function to insert a node at the beginning of the CLL
+void insbeg(struct cll *);
+// Function to insert a node at the end of the CLL
+void insend(struct cll *);
+// Function to delete a node from the beginning of the CLL
+void delbeg(struct cll *);
+// Function to delete a node from the end of the CLL
+void delend(struct cll *);
+
+int main() {
+    int choice;
+
+    while (1) {
+        printf("\n***** MENU *****\n");
+        printf("1. Creation of CLL\n 2. Display\n 3. Insertion at the beginning\n 4. Insertion at the end\n 5. Deletion at the beginning\n 6. Deletion at the end\n 7. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (head != NULL)
+                    printf("CLL ALREADY CREATED\n");
+                else
+                    create();
+                break;
+            case 2:
+                if (head == NULL)
+                    printf("CLL not created\n");
+                else
+                    display(head);
+                break;
+            case 3:
+                if (head == NULL)
+                    printf("CLL not created\n");
+                else
+                    insbeg(head);
+                break;
+            case 4:
+                if (head == NULL)
+                    printf("CLL not created\n");
+                else
+                    insend(head);
+                break;
+            case 5:
+                if (head == NULL)
+                    printf("CLL not created\n");
+                else
+                    delbeg(head);
+                break;
+            case 6:
+                if (head == NULL)
+                    printf("CLL not created\n");
+                else
+                    delend(head);
+                break;
+            case 7:
+                exit(0);
+            default:
+                printf("Wrong selection!!! Try again!!!\n");
+        }
+    }
+
+    return 0;
+}
+
+void create() {
+    struct cll *newnode, *temp;
+    char ch;
+
+    do {
+        newnode = (struct cll *)malloc(sizeof(struct cll));
+        printf("Enter data: ");
+        scanf("%d", &newnode->data);
+
+        if (head == NULL) {
+            head = newnode;
+            newnode->link = head;
+        } else {
+            temp = head;
+            while (temp->link != head)
+                temp = temp->link;
+            temp->link = newnode;
+            newnode->link = head;
+        }
+
+        printf("Do you want to create more nodes? (y/n): ");
+        fflush(stdin);
+        scanf(" %c", &ch);
+    } while (ch == 'y');
+}
+
+void display(struct cll *t1) {
+    printf("Circular Linked List: ");
+    do {
+        printf("%d ---> ", t1->data);
+        t1 = t1->link;
+    } while (t1 != head);
+    printf("HEAD\n");
+}
+
+void insbeg(struct cll *t1) {
+    struct cll *newnode = (struct cll *)malloc(sizeof(struct cll));
+    printf("Enter data: ");
+    scanf("%d", &newnode->data);
+
+    while (t1->link != head)
+        t1 = t1->link;
+
+    t1->link = newnode;
+    newnode->link = head;
+    head = newnode;
+}
+
+void insend(struct cll *t1) {
+    struct cll *newnode = (struct cll *)malloc(sizeof(struct cll));
+    printf("Enter data: ");
+    scanf("%d", &newnode->data);
+
+    while (t1->link != head)
+        t1 = t1->link;
+
+    newnode->link = t1->link;
+    t1->link = newnode;
+}
+
+void delbeg(struct cll *t1) {
+    struct cll *t2 = head;
+
+    if (head->link == head) {
+        printf("Deleted data: %d\n", t1->data);
+        free(t2);
+        head = NULL;
+    } else {
+        printf("Deleted data: %d\n", t1->data);
+        head = t1->link;
+        while (t2->link != t1)
+            t2 = t2->link;
+        t2->link = head;
+        free(t1);
+    }
+}
+
+void delend(struct cll *t1) {
+    struct cll *t2 = head;
+
+    if (head->link == head) {
+        printf("Deleted data: %d\n", t1->data);
+        free(t2);
+        head = NULL;
+    } else {
+        while (t2->link != head) {
+            t1 = t2;
+            t2 = t2->link;
+        }
+        printf("Deleted data: %d\n", t2->data);
+        t1->link = head;
+        free(t2);
+    }
+}
