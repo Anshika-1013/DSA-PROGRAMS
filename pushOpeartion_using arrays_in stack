@@ -1,0 +1,24 @@
+#include<stdio.h>
+
+#define MAX 4
+int stack_array[MAX]; // Added int before the array declaration
+int top = -1;
+
+void push(int data) {
+    if(top == MAX - 1) {
+        printf("Stack overflow\n"); // Changed single quotes to double quotes
+        return;
+    }
+    top = top + 1;
+    stack_array[top] = data;
+}
+
+int main() {
+    push(1);
+    push(2);
+    push(3);
+    push(4);
+    push(5); // This will trigger the stack overflow condition
+
+    return 0; // Added a return statement for the main function
+}
