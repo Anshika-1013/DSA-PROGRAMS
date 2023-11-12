@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 4
+
+int stack_array[MAX];
+int top = -1;
+
+int pop() {
+    int value;
+    if (top == -1) {
+        printf("stack underflow\n");
+        exit(1);
+    }
+    value = stack_array[top];
+    top = top - 1;
+    return value;
+}
+
+int main() {
+    int data;
+    data = pop();
+    // Rest of your main function logic...
+    return 0;
+}
