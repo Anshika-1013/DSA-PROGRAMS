@@ -6,10 +6,19 @@
 int stack_array[MAX];
 int top = -1;
 
+void push(int value) {
+    if (top == MAX - 1) {
+        printf("Stack overflow\n");
+        exit(1);
+    }
+    top = top + 1;
+    stack_array[top] = value;
+}
+
 int pop() {
     int value;
     if (top == -1) {
-        printf("stack underflow\n");
+        printf("Stack underflow\n");
         exit(1);
     }
     value = stack_array[top];
@@ -17,9 +26,35 @@ int pop() {
     return value;
 }
 
+void print() {
+    int i;
+    if (top == -1) {
+        printf("Stack Underflow\n");
+        exit(1);
+    }
+    for (i = top; i >= 0; i--) {
+        printf("%d ", stack_array[i]);
+    }
+    printf("\n");
+}
+
 int main() {
-    int data;
-    data = pop();
-    // Rest of your main function logic...
+    // Pushing elements onto the stack
+    push(10);
+    push(20);
+    push(30);
+    
+    // Printing the initial stack
+    printf("Stack before popping: ");
+    print();
+    
+    // Popping an element from the stack
+    int data = pop();
+    printf("Popped element: %d\n", data);
+
+    // Printing the stack after popping
+    printf("Stack after popping: ");
+    print();
+
     return 0;
 }
