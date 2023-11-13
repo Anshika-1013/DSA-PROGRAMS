@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure for a singly linked list
+struct node {
+    int data;
+    struct node *link;
+};
+
+// Global variable for the top of the stack
+struct node *top = NULL;
+
+// Function declarations
+void push(int data);
+void print();
+
+int main() {
+    int data, choice;
+
+    // Menu-driven program
+    while (1) {
+        printf("1. push\n");
+        printf("2. print\n");
+        printf("3. quit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the element to be pushed: ");
+                scanf("%d", &data);
+                push(data);
+                break;
+            case 2:
+                print();
+                break;
+            case 3:
+                exit(0); // Exit the program
+            default:
+                printf("Wrong choice\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+// Function to push a new element onto the stack
+void push(int data) {
+    struct node *newNode;
+    newNode = (struct node *)malloc(sizeof(struct node));
+
+    if (newNode == NULL) {
+        printf("Stack Overflow\n");
+        exit(1);
+    }
+
+    // Initialize the new node
+    newNode->data = data;
+    newNode->link = top;
+
+    // Update the top to the new node
+    top = newNode;
+}
+
+// Function to print the elements of the stack
+void print() {
+    struct node *temp;
+    temp = top;
+
+    // Traverse the stack and print elements
+    printf("Stack elements are: ");
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->link;
+    }
+    printf("\n");
+}
