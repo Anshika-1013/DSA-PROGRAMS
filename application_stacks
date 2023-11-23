@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node* next;
+} Node;
+
+Node* newNode(char data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void push(Node** top_ref, char new_data) {
+    Node* new_node = newNode(new_data);
+    new_node->next = (*top_ref);
+    (*top_ref) = new_node;
+}
+
+char pop(Node** top_ref) {
+    char res;
+    Node *top;
+    if (*top_ref == NULL) {
+        printf("Stack overflow \n");
+        exit(0);
+    } else {
+        top = *top_ref;
+        res = top->data;
+        *top_ref = top->next;
+        free(top);
+        return res;
+    }
+}
+
+void correctAndReverse(char* str) {
+    Node* head = NULL;
+    char* correctedStr = strtok(str, "<-");
+    while (*correctedStr) {
+        push(&head, *correctedStr++);
+    }
+    while (head) {
+        printf("%c", pop(&head));
+    }
+}
+
+int main() {
+    char str[] = "abc_defgh<-2klpqr<-wxyz";
+    correctAndReverse(str);
+    return 0;
+}
