@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+int i,j;
+// Structure for a binary tree node
+struct Node {
+    char data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Function to create a new node with the given data
+struct Node* newNode(char data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+// Function to print the data of a node with indentation for tree structure
+void printNode(struct Node* node, int space, char direction) {
+    if (node == NULL)
+        return;
+
+    // Increase distance between levels
+    space += 5;
+
+    // Print right child
+    printNode(node->right, space, '/');
+
+    // Print current node after space
+    printf("\n");
+    for ( i = 5; i < space; i++)
+        printf(" ");
+    if (direction != ' ')
+        printf("%c %c\n", direction, node->data);
+    else
+        printf("%c\n", node->data);
+
+    // Print left child
+    printNode(node->left, space, '\\');
+}
+
+// Function to perform pre-order traversal with level information
+void preOrder(struct Node* root, int level) {
+    if (root != NULL) {
+        printNode(root, level, ' ');
+        preOrder(root->left, level + 1);
+        preOrder(root->right, level + 1);
+    }
+}
+
+// Function to perform in-order traversal with level information
+void inOrder(struct Node* root, int level) {
+    if (root != NULL) {
+        inOrder(root->left, level + 1);
+        printNode(root, level, ' ');
+        inOrder(root->right, level + 1);
+    }
+}
+
+// Function to perform post-order traversal with level information
+void postOrder(struct Node* root, int level) {
+    if (root != NULL) {
+        postOrder(root->left, level + 1);
+        postOrder(root->right, level + 1);
+        printNode(root, level, ' ');
+    }
+}
+
+// Function to create a binary tree using level order traversal
+struct Node* buildTreeLevelOrder(char levelOrderArray[], int n) {
+    if (n == 0)
+        return NULL;
+
+    struct Node** queue = (struct Node**)malloc(n * sizeof(struct Node*));
+
+    // Create root node
+    struct Node* root = newNode(levelOrderArray[0]);
+    queue[0] = root;
+
+    int front = 0, rear = 1, i = 1;
+
+    while (i < n) {
+        struct Node* temp = queue[front++];
+        if (i < n) {
+            temp->left = newNode(levelOrderArray[i++]);
+            queue[rear++] = temp->left;
+        }
+        if (i < n) {
+            temp->right = newNode(levelOrderArray[i++]);
+            queue[rear++] = temp->right;
+        }
+    }
+
+    free(queue);
+    return root;
+}
+
+// Function to create a binary tree using pre-order and in-order traversals
+struct Node* buildTree(char preOrderArray[], char inOrderArray[], int start, int end) {
+    static int preIndex = 0;
+
+    if (start > end)
+        return NULL;
+
+    struct Node* root = newNode(preOrderArray[preIndex++]);
+
+    if (start == end)
+        return root;
+
+    int inIndex;
+    for (inIndex = start; inIndex <= end; inIndex++)
+        if (inOrderArray[inIndex] == root->data)
+            break;
+
+    root->left = buildTree(preOrderArray, inOrderArray, start, inIndex - 1);
+    root->right = buildTree(preOrderArray, inOrderArray, inIndex + 1, end);
+
+    return root;
+}
+
+int main() {
+    // Example usage
+    char levelOrderArray[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G'};
+    int levelOrderSize = sizeof(levelOrderArray) / sizeof(levelOrderArray[0]);
+
+    char preOrderArray[] = {'A', 'B', 'D', 'E', 'C', 'F', 'G'};
+    char inOrderArray[] = {'D', 'B', 'E', 'A', 'F', 'C', 'G'};
+    int n = sizeof(preOrderArray) / sizeof(preOrderArray[0]);
+
+    struct Node* rootLevelOrder = buildTreeLevelOrder(levelOrderArray, levelOrderSize);
+    struct Node* rootPreInOrder = buildTree(preOrderArray, inOrderArray, 0, n - 1);
+
+    printf("Binary Tree created using Level Order:\n");
+    printNode(rootLevelOrder, 0, ' ');
+
+    printf("\nPre-order traversal:\n");
+    preOrder(rootPreInOrder, 0);
+
+    printf("\nIn-order traversal:\n");
+    inOrder(rootPreInOrder, 0);
+
+    printf("\nPost-order traversal:\n");
+    postOrder(rootPreInOrder, 0);
+
+    return 0;
+}
